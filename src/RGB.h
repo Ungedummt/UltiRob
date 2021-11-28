@@ -1,12 +1,40 @@
+#ifndef	RGB_H
+#define RGB_H
+
 #include <Arduino.h>
 
 typedef unsigned char byte;
+
+const char HEX_LOOKUPTABLE [17] = "0123456789ABCDEF";
 
 typedef struct {
   byte red;
   byte green;
   byte blue;
 } rgb;
+
+String rgb_to_hex_string(rgb RGB) {
+  char hex[6] = {};
+
+  byte mask_1 = 0b11110000;
+  byte mask_2 = 0b00001111;
+
+  hex[0] = HEX_LOOKUPTABLE[(mask_1 & RGB.red) >> 4];
+  hex[1] = HEX_LOOKUPTABLE[ mask_2 & RGB.red ];
+
+  hex[2] = HEX_LOOKUPTABLE[(mask_1 & RGB.green) >> 4];
+  hex[3] = HEX_LOOKUPTABLE[ mask_2 & RGB.green ];
+
+  hex[4] = HEX_LOOKUPTABLE[(mask_1 & RGB.blue) >> 4];
+  hex[5] = HEX_LOOKUPTABLE[ mask_2 & RGB.blue ];
+
+  String str = "";
+  for (uint8_t i = 0; i < 6; i++) {
+    str += hex[i];
+  }
+
+  return String(str);
+}
 
 String rgb_to_char_array(rgb *RGB) {
   String str;
@@ -84,3 +112,5 @@ String rgb_hex_string_to_string(String prefix, String rgb_string) {
 String rgb_hex_string_to_string(String rgb_string) {
   return rgb_hex_to_string("", rgb_string.substring(1,7));
 }
+
+#endif
